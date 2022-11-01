@@ -54,7 +54,7 @@
                             document.getElementById("success").innerHTML = "验证成功，页面跳转中...";
                             document.getElementById("success").style = "";
                             document.getElementById("error").style = "display: none";
-                            window.location.href = "https://t.me/" + "{{ user.username }}" + "?start=challenge_" + result;
+                            window.location.href = "https://t.me/" + "{{ user.username }}" + "?start=challenge_" + result.geetest_validate;
                         });
                         captcha.onError(function(error) {
                             console.log("Error during captcha validation");
