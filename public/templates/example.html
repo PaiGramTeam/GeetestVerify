@@ -17,7 +17,7 @@
             </div>
             <!--Title-->
             <h1 class="flex flex-col mb-4 text-lg tracking-wider">
-                GeeTest Validation
+                GeeTest Verification
             </h1>
             <!--Validation Box-->
             <div class="max-w-xs p-4 flex flex-col items-center bg-gray-50 rounded-xl border border-1 w-full h-full">
@@ -58,7 +58,10 @@
                         });
                         captcha.onError(function(error) {
                             console.log("Error during captcha validation");
-                            document.getElementById("error").innerHTML = "发生错误, error: " + error.msg;
+                            console.error(error);
+                            submitButton.style = "display: none";
+                            var msg = (error !== undefined) ? error.msg : "unknown error";
+                            document.getElementById("error").innerHTML = "发生错误: " + msg;
                             document.getElementById("error").style = "";
                             document.getElementById("success").style = "display: none";
                         });
