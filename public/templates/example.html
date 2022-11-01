@@ -50,17 +50,18 @@
                         captcha.appendTo(submitButton);
                         captcha.onSuccess(function() {
                             var result = captcha.getValidate();
-                            console.log("Success: " + result.geetest_validate);
+                            console.log("Success: " + result);
                             document.getElementById("success").innerHTML = "验证成功，页面跳转中...";
                             document.getElementById("success").style = "";
                             document.getElementById("error").style = "display: none";
-                            window.location.href = "https://t.me/" + "{{ user.username }}" + "?start=challenge_" + result;
+                            window.location.href = "https://t.me/" + "{{ user.username }}" + "?start=challenge_" + result.geetest_validate;
                         });
                         captcha.onError(function(error) {
                             console.log("Error during captcha validation");
                             document.getElementById("error").innerHTML = "发生错误, error: " + error.msg;
                             document.getElementById("error").style = "";
                             document.getElementById("success").style = "display: none";
+                            submitButton.style = "display: none";
                         });
                         submitButton.onclick = function() {
                             captcha.verify();
