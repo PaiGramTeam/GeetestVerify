@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Geetest Validation | TGPaimonBot</title>
+    <title>Geetest Verification | TGPaimonBot</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/js/gt.js" type="text/javascript"></script>
@@ -50,8 +50,10 @@
                         captcha.appendTo(submitButton);
                         captcha.onSuccess(function() {
                             var result = captcha.getValidate();
+                            submitButton.style = "display: none";
                             console.log("Success: " + result.geetest_validate);
-                            document.getElementById("success").innerHTML = "验证成功，页面跳转中...";
+                            copyText("/sign " + result.geetest_validate);
+                            document.getElementById("success").innerHTML = "验证成功，如果使用代理请等待页面自动跳转，否则请直接将剪贴板的命令发送给 Bot";
                             document.getElementById("success").style = "";
                             document.getElementById("error").style = "display: none";
                             window.location.href = "https://t.me/" + "{{ user.username }}" + "?start=challenge_" + result.geetest_validate;
@@ -71,6 +73,19 @@
                             document.getElementById("error").style = "display: none";
                         };
                     });
+                </script>
+                <script type="text/javascript">
+                    function copyText(text) {
+                        var textareaC = document.createElement('textarea');
+                        textareaC.setAttribute('readonly', 'readonly');
+                        textareaC.value = text;
+                        document.body.appendChild(textareaC);
+                        textareaC.select();
+                        var res = document.execCommand('copy');
+                        document.body.removeChild(textareaC);
+                        console.log("复制成功");
+                        return res;
+                    }
                 </script>
             </div>
         </div>
