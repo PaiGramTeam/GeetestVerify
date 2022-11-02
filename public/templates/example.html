@@ -40,21 +40,21 @@
         textareaC.select();
         var res = document.execCommand('copy');
         document.body.removeChild(textareaC);
-        console.log("复制成功");
         return res;
     }
     function copyWithSignCommand() {
-        var successBox = document.getElementById("success");
+        var successBox = document.getElementById("copy-success");
         successBox.innerText = "";
         console.log('Copying...');
         var code = getVerificationCode();
         var text = "/sign " + code;
         var success = copyText(text);
         if (success) {
-            var successBox = document.getElementById("copy-success");
+            console.log("复制成功");
             successBox.innerText = "复制成功，请前往 @PaimonMasterBot 粘贴验证指令"
             successBox.style = "";
         } else {
+            console.log("复制失败");
             setAndShowErrorMsg("复制失败 :(");
         }
     }
