@@ -35,7 +35,6 @@
     function copyText(text) {
         var textareaC = document.createElement('textarea');
         textareaC.setAttribute('readonly', 'readonly');
-        textareaC.style = "height: 0px; width=0px";
         textareaC.value = text;
         document.body.appendChild(textareaC);
         textareaC.select();
@@ -45,6 +44,7 @@
         return res;
     }
     function copyWithSignCommand() {
+        successBox.innerText = "";
         console.log('Copying...');
         var code = getVerificationCode();
         var text = "/sign " + code;
