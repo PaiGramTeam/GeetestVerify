@@ -15,6 +15,7 @@ templates = Jinja2Templates(directory="public/templates")
 async def debug_challenge_page(
         request: Request,
         username: str = Query(..., title="username"),
+        command: str = Query(..., title="command"),
         uid: str = Query(..., title="uid"),
         gt: str = Query(..., title="gt"),
         challenge: str = Query(..., title="challenge")
@@ -22,6 +23,7 @@ async def debug_challenge_page(
     user = {
         "username": username,
         "uid": uid,
+        "command": command
     }
     geetest = {
         "gt": gt,
