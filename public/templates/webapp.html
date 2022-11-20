@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/js/gt.js" type="text/javascript"></script>
-    <script src="/telegram-web-app.js"></script>
+    <script src="https://static.collei.net/paimon/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 </head>
 <body>
@@ -90,7 +90,9 @@
                         const submitButton = document.getElementById("submit");
                         captcha.appendTo(submitButton);
                         captcha.onReady(function () {
-                            // un-hide submit button on ready and register onclick
+                            window.onload = function(){
+                                captcha.verify();
+                            }
                             submitButton.onclick = function (e) {
                                 e.preventDefault();
                                 captcha.verify();
