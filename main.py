@@ -1,9 +1,12 @@
+import httpx
+
 from fastapi import FastAPI, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
+client = httpx.AsyncClient()
 
 app.mount("/img", StaticFiles(directory="public/img"), name="img")
 app.mount("/js", StaticFiles(directory="public/js"), name="js")
@@ -47,3 +50,7 @@ async def debug_challenge_page(
     return templates.TemplateResponse(
         "webapp.html", {"request": request, "user": user, "geetest": geetest}
     )
+
+@app.get("/telegram-web-app.js", response_class=PlainTextResponse)
+async def get_telegram_web_js():
+    return (await client.get("https://telegram.org/js/telegram-web-app.js")).text
