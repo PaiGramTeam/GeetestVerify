@@ -128,7 +128,7 @@
     }
 
     function getBotData() {
-        return JSON.parse("{{ user.bot_data }}");
+        return JSON.parse(window.atob("{{ user.bot_data }}"));
     }
 
     function getPath() {

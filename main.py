@@ -1,6 +1,3 @@
-import base64
-import binascii
-
 import httpx
 
 from fastapi import FastAPI, Query, Request
@@ -61,11 +58,7 @@ async def debug_tasks1_page(
     command: str = Query(..., title="command"),
     bot_data: str = Query(..., title="bot_data"),
 ):
-    try:
-        data = base64.b64decode(bot_data).decode("utf-8")
-    except binascii.Error:
-        data = "{}"
-    user = {"command": command, "bot_data": data}
+    user = {"command": command, "bot_data": bot_data}
     return templates.TemplateResponse(
         "tasks1.html", {"request": request, "user": user}
     )
@@ -77,11 +70,7 @@ async def debug_tasks2_page(
     command: str = Query(..., title="command"),
     bot_data: str = Query(..., title="bot_data"),
 ):
-    try:
-        data = base64.b64decode(bot_data).decode("utf-8")
-    except binascii.Error:
-        data = "{}"
-    user = {"command": command, "bot_data": data}
+    user = {"command": command, "bot_data": bot_data}
     return templates.TemplateResponse(
         "tasks2.html", {"request": request, "user": user}
     )
