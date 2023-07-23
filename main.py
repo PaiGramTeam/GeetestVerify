@@ -1,3 +1,6 @@
+import base64
+import binascii
+
 import httpx
 
 from fastapi import FastAPI, Query, Request
@@ -50,6 +53,39 @@ async def debug_challenge_page(
     return templates.TemplateResponse(
         "webapp.html", {"request": request, "user": user, "geetest": geetest}
     )
+
+
+@app.get("/tasks1", response_class=HTMLResponse)
+async def debug_tasks1_page(
+    request: Request,
+    command: str = Query(..., title="command"),
+    bot_data: str = Query(..., title="bot_data"),
+):
+    try:
+        data = base64.b64decode(bot_data).decode("utf-8")
+    except binascii.Error:
+        data = "{}"
+    user = {"command": command, "bot_data": data}
+    return templates.TemplateResponse(
+        "tasks1.html", {"request": request, "user": user}
+    )
+
+
+@app.get("/tasks2", response_class=HTMLResponse)
+async def debug_tasks2_page(
+    request: Request,
+    command: str = Query(..., title="command"),
+    bot_data: str = Query(..., title="bot_data"),
+):
+    try:
+        data = base64.b64decode(bot_data).decode("utf-8")
+    except binascii.Error:
+        data = "{}"
+    user = {"command": command, "bot_data": data}
+    return templates.TemplateResponse(
+        "tasks2.html", {"request": request, "user": user}
+    )
+
 
 @app.get("/telegram-web-app.js", response_class=PlainTextResponse)
 async def get_telegram_web_js():
