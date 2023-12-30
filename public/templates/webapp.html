@@ -102,7 +102,7 @@
                             const result = captcha.getValidate();
                             console.log("Success: " + result.geetest_validate);
                             hideSubmitButton();
-                            setAndShowSuccessMsg("验证成功，如果使用代理请直接点击返回TG，否则请复制上方的验证码发送给 @PaimonMasterBot");
+                            setAndShowSuccessMsg("验证成功，如果使用代理请直接点击返回TG，否则请复制上方的验证码发送给 @{{ user.username }}");
                             document.getElementById("success").style = "";
                             document.getElementById("error").style = "display: none";
                             const data = parseJson({geetest_validate: result.geetest_validate}, 0, "OK");
