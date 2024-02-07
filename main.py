@@ -80,10 +80,12 @@ async def debug_tasks2_page(
 async def relic_property_page(
     request: Request,
     command: str = Query(..., title="command"),
+    name: str = Query(..., title="name"),
+    cid: str = Query(..., title="cid"),
     recommend: str = Query(..., title="recommend"),
     custom: str = Query(..., title="custom"),
 ):
-    user = {"command": command, "recommend": recommend, "custom": custom}
+    user = {"command": command, "recommend": recommend, "custom": custom, "name": name, "cid": cid}
     return templates.TemplateResponse(
         "relic_property.html", {"request": request, "user": user}
     )

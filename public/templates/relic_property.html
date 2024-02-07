@@ -62,7 +62,7 @@
     <h1>副属性自定义</h1>
 </header>
 <div style="height: 10px;"></div>
-<h4 class="mb-4">勾选需要标记的属性，将在角色和遗器副属性中高亮显示并统计有效副属性数量</h4>
+<h4 class="mb-4">勾选需要标记的属性，将在 {{ user.name }} 角色和遗器副属性中高亮显示并统计有效副属性数量</h4>
 <div style="height: 10px;"></div>
     <main class="container py-5">
         <form>
@@ -199,6 +199,10 @@
         return "{{ user.custom }}".split(",")
     }
 
+    function getAvatarId() {
+        return "{{ user.cid }}"
+    }
+
     function init() {
         const custom = getCustom();
         const recommend = getRecommend();
@@ -208,6 +212,7 @@
     function submit() {
         const clicked = getClicked();
         const web_data = {
+            cid: getAvatarId(),
             custom: clicked
         }
         const data = parseJson(web_data, 0, "OK");
