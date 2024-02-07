@@ -196,7 +196,11 @@
     }
 
     function getCustom() {
-        return "{{ user.custom }}".split(",")
+        const text = "{{ user.custom }}";
+        if (text === "") {
+            return [];
+        }
+        return text.split(",");
     }
 
     function getAvatarId() {
