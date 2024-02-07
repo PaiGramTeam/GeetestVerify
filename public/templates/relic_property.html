@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>副属性自定义 - PaiGramTeam</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" integrity="sha512-t4GWSVZO1eC8BM339Xd7Uphw5s17a86tIZIj8qRxhnKub6WoyhnrxeCIMeAqBPgdZGlCcG2PrZjMc+Wr78+5Xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js" integrity="sha512-3dZ9wIrMMij8rOH7X3kLfXAzwtcHpuYpEgQg1OA4QAob1e81H8ntUQmQm3pBudqIoySO5j0tHN4ENzA6+n2r4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://static.collei.net/paimon/js/telegram-web-app.js"></script>
+        <style>
+        body {
+            background-color: #222;
+            color: #222;
+        }
+
+        .white {
+            color: #eee;
+        }
+
+        h1, h4 {
+            color: #eee;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .navbar {
+            background-color: #333;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            color: #eee;
+        }
+        /* 自定义样式 */
+        .form-check {
+            color: #eee;
+            background-color: #333; /* 浅灰色背景 */
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1); /* 添加阴影效果 */
+            margin-bottom: 15px; /* 增加下方外边距 */
+            display: flex; /* 使用flex布局 */
+            justify-content: space-between; /* 两端对齐 */
+            align-items: center; /* 垂直居中 */
+        }
+        .container {
+            max-width: 800px; /* 限制容器最大宽度 */
+        }
+        .row {
+            justify-content: center; /* 使列在行中居中对齐 */
+        }
+        .btn {
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>副属性自定义</h1>
+</header>
+<div style="height: 10px;"></div>
+<h4 class="mb-4">勾选需要标记的属性，将在角色和遗器副属性中高亮显示并统计有效副属性数量</h4>
+<div style="height: 10px;"></div>
+    <main class="container py-5">
+        <form>
+            <div class="row">
+                <!-- 生命值相关 -->
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-check">
+                        <label class="form-check-label" for="27">生命值 </label>
+                        <input class="form-check-input" type="checkbox" id="27">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="32">生命值百分比 </label>
+                        <input class="form-check-input" type="checkbox" id="32">
+                    </div>
+                </div>
+                <!-- 攻击力相关 -->
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-check">
+                        <label class="form-check-label" for="29">攻击力 </label>
+                        <input class="form-check-input" type="checkbox" id="29">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="33">攻击力百分比 </label>
+                        <input class="form-check-input" type="checkbox" id="33">
+                    </div>
+                </div>
+                <!-- 防御力相关 -->
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-check">
+                        <label class="form-check-label" for="31">防御力 </label>
+                        <input class="form-check-input" type="checkbox" id="31">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="34">防御力百分比 </label>
+                        <input class="form-check-input" type="checkbox" id="34">
+                    </div>
+                </div>
+                <!-- 速度 -->
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-check">
+                        <label class="form-check-label" for="51">速度 </label>
+                        <input class="form-check-input" type="checkbox" id="51">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="57">效果抵抗 </label>
+                        <input class="form-check-input" type="checkbox" id="57">
+                    </div>
+                </div>
+                <!-- 暴击率 -->
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-check">
+                        <label class="form-check-label" for="52">暴击率 </label>
+                        <input class="form-check-input" type="checkbox" id="52">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="53">暴击伤害 </label>
+                        <input class="form-check-input" type="checkbox" id="53">
+                    </div>
+                </div>
+                <!-- 击破特攻 -->
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-check">
+                        <label class="form-check-label" for="59">击破特攻 </label>
+                         <input class="form-check-input" type="checkbox" id="59">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label" for="56">效果命中 </label>
+                        <input class="form-check-input" type="checkbox" id="56">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-check">
+                        <button type="reset" class="btn white">重置</button>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                </div>
+            </div>
+        </form>
+            <div class="d-grid gap-2">
+        <button class="btn btn-primary" type="button" onclick="submit();">保存</button>
+    </div>
+    </main>
+<div style="height: 100px;"></div>
+
+<footer>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">PaiGramTeam</a>
+        </div>
+    </nav>
+</footer>
+
+<script>
+    function addRecommend(tid) {
+        const badge = document.createElement('span');
+        badge.className = 'badge rounded-pill text-bg-warning';
+        badge.innerHTML = '推荐';
+        const label = document.querySelector('label[for="' + tid + '"]')
+        label.appendChild(badge);
+    }
+
+    function getClicked() {
+        const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+        const result = [];
+        checked.forEach((item) => {
+            result.push(item.id);
+        });
+        return result;
+    }
+
+    function setClicked(custom, recommend) {
+        if (custom.length === 0) {
+            custom = recommend;
+        }
+        custom.forEach((item) => {
+            const input = document.querySelector('input[id="' + item + '"]');
+            input.checked = true;
+        });
+        recommend.forEach((item) => {
+            addRecommend(item);
+        });
+    }
+
+    function getPath() {
+        return "{{ user.command }}"
+    }
+
+    function getRecommend() {
+        return "{{ user.recommend }}".split(",")
+    }
+
+    function getCustom() {
+        return "{{ user.custom }}".split(",")
+    }
+
+    function init() {
+        const custom = getCustom();
+        const recommend = getRecommend();
+        setClicked(custom, recommend);
+    }
+
+    function submit() {
+        const clicked = getClicked();
+        const web_data = {
+            custom: clicked
+        }
+        const data = parseJson(web_data, 0, "OK");
+        console.log(data);
+        Telegram.WebApp.sendData(data);
+        Telegram.WebApp.close();
+    }
+
+    function parseJson(data, code, message) {
+        const path = getPath();
+        return JSON.stringify({
+                path: path,
+                data: data,
+                code: code,
+                message: message
+            }
+        );
+    }
+
+    init();
+</script>
+</body>
+</html>

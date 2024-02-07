@@ -76,6 +76,19 @@ async def debug_tasks2_page(
     )
 
 
+@app.get("/relic_property", response_class=HTMLResponse)
+async def relic_property_page(
+    request: Request,
+    command: str = Query(..., title="command"),
+    recommend: str = Query(..., title="recommend"),
+    custom: str = Query(..., title="custom"),
+):
+    user = {"command": command, "recommend": recommend, "custom": custom}
+    return templates.TemplateResponse(
+        "relic_property.html", {"request": request, "user": user}
+    )
+
+
 @app.get("/telegram-web-app.js", response_class=PlainTextResponse)
 async def get_telegram_web_js():
     return (await client.get("https://telegram.org/js/telegram-web-app.js")).text
