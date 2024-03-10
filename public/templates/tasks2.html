@@ -54,6 +54,9 @@
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="tab" href="#tab2">委托</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab4">每日</a>
+        </li>
     </ul>
 
     <div class="tab-content">
@@ -81,6 +84,20 @@
                 </div>
             </form>
         </div>
+        <div class="tab-pane" id="tab4">
+            <form>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <label class="form-check-label text-white" for="task4-switch">提醒开关</label>
+                        <input class="form-check-input" type="checkbox" id="task4-switch">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label text-white" for="task4-input">几点提醒你？</label>
+                        <input type="number" class="form-control" id="task4-input" min="0" max="23">
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div class="d-grid gap-2">
@@ -101,6 +118,8 @@
     const t1_switch = document.getElementById("task1-switch");
     const t1_input = document.getElementById("task1-input");
     const t2_switch = document.getElementById("task2-switch");
+    const t4_switch = document.getElementById("task4-switch");
+    const t4_input = document.getElementById("task4-input");
 
     function submit() {
         const web_data = {
@@ -110,6 +129,10 @@
             },
             expedition: {
                 noticed: t2_switch.checked
+            },
+            daily: {
+                noticed: t4_switch.checked,
+                notice_hour: t4_input.value
             }
         };
         const data = parseJson(web_data, 0, "OK");
@@ -122,9 +145,12 @@
         const bot_data = getBotData();
         const resin = bot_data.resin ?? {};
         const expedition = bot_data.expedition ?? {};
+        const daily = bot_data.daily ?? {};
         t1_switch.checked = resin.noticed ?? false;
         t1_input.value = resin.notice_num ?? 140;
         t2_switch.checked = expedition.noticed ?? false;
+        t4_switch.checked = daily.noticed ?? false;
+        t4_input.value = daily.notice_hour ?? 22;
     }
 
     function getBotData() {
