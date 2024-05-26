@@ -76,6 +76,18 @@ async def debug_tasks2_page(
     )
 
 
+@app.get("/tasks3", response_class=HTMLResponse)
+async def debug_tasks3_page(
+    request: Request,
+    command: str = Query(..., title="command"),
+    bot_data: str = Query(..., title="bot_data"),
+):
+    user = {"command": command, "bot_data": bot_data}
+    return templates.TemplateResponse(
+        "tasks3.html", {"request": request, "user": user}
+    )
+
+
 @app.get("/relic_property", response_class=HTMLResponse)
 async def relic_property_page(
     request: Request,
