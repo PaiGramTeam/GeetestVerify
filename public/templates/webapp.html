@@ -31,6 +31,10 @@
         return "{{ user.command }}"
     }
 
+    function getUserId() {
+        return "{{ user.user_id }}"
+    }
+
     function parseJson(data, code, message) {
         const path = getPath();
         return JSON.stringify({
@@ -105,7 +109,7 @@
                             setAndShowSuccessMsg("验证成功，如果使用代理请直接点击返回TG，否则请复制上方的验证码发送给 @{{ user.username }}");
                             document.getElementById("success").style = "";
                             document.getElementById("error").style = "display: none";
-                            const data = parseJson({geetest_validate: result.geetest_validate}, 0, "OK");
+                            const data = parseJson({geetest_validate: result.geetest_validate, user_id: getUserId()}, 0, "OK");
                             Telegram.WebApp.sendData(data);
                             Telegram.WebApp.close();
                         });

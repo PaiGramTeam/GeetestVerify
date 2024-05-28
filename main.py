@@ -41,8 +41,9 @@ async def debug_challenge_page(
         uid: str = Query(..., title="uid"),
         gt: str = Query(..., title="gt"),
         challenge: str = Query(..., title="challenge"),
+        user_id: str = Query("", title="user_id"),
 ):
-    user = {"username": username, "uid": uid, "command": command}
+    user = {"username": username, "uid": uid, "command": command, "user_id": user_id}
     geetest = {
         "gt": gt,
         "challenge": challenge,
