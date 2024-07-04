@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>定时任务配置 - PaiGramTeam</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" integrity="sha512-t4GWSVZO1eC8BM339Xd7Uphw5s17a86tIZIj8qRxhnKub6WoyhnrxeCIMeAqBPgdZGlCcG2PrZjMc+Wr78+5Xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js" integrity="sha512-3dZ9wIrMMij8rOH7X3kLfXAzwtcHpuYpEgQg1OA4QAob1e81H8ntUQmQm3pBudqIoySO5j0tHN4ENzA6+n2r4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://static.collei.net/paimon/js/telegram-web-app.js"></script>
+
+    <!-- custom styles -->
+    <style>
+        body {
+            background-color: #222;
+            color: #222;
+        }
+
+        h1 {
+            color: #eee;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .navbar {
+            background-color: #333;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            color: #eee;
+        }
+
+        .tab-content {
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>定时任务配置</h1>
+</header>
+<div style="height: 30px;"></div>
+<main class="container">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tab1">电量</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab2">录像店经营</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab4">每日</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab1">
+            <form>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <label class="form-check-label text-white" for="task1-switch">提醒开关</label>
+                        <input class="form-check-input" type="checkbox" id="task1-switch">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label text-white" for="task1-input">提醒阈值</label>
+                        <input type="number" class="form-control" id="task1-input" min="60" max="240">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="tab-pane" id="tab2">
+            <form>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <label class="form-check-label text-white" for="task2-switch">提醒开关</label>
+                        <input class="form-check-input" type="checkbox" id="task2-switch">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="tab-pane" id="tab4">
+            <form>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <label class="form-check-label text-white" for="task4-switch">提醒开关</label>
+                        <input class="form-check-input" type="checkbox" id="task4-switch">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label text-white" for="task4-input">几点提醒你？</label>
+                        <input type="number" class="form-control" id="task4-input" min="0" max="23">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="d-grid gap-2">
+        <button class="btn btn-primary" type="button" onclick="submit();">保存</button>
+    </div>
+</main>
+<div style="height: 100px;"></div>
+
+<footer>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">PaiGramTeam</a>
+        </div>
+    </nav>
+</footer>
+
+<script>
+    const t1_switch = document.getElementById("task1-switch");
+    const t1_input = document.getElementById("task1-input");
+    const t2_switch = document.getElementById("task2-switch");
+    const t4_switch = document.getElementById("task4-switch");
+    const t4_input = document.getElementById("task4-input");
+
+    function submit() {
+        const web_data = {
+            resin: {
+                noticed: t1_switch.checked,
+                notice_num: t1_input.value
+            },
+            expedition: {
+                noticed: t2_switch.checked
+            },
+            daily: {
+                noticed: t4_switch.checked,
+                notice_hour: t4_input.value
+            }
+        };
+        const data = parseJson(web_data, 0, "OK");
+        console.log(data);
+        Telegram.WebApp.sendData(data);
+        Telegram.WebApp.close();
+    }
+
+    function init() {
+        const bot_data = getBotData();
+        const resin = bot_data.resin ?? {};
+        const expedition = bot_data.expedition ?? {};
+        const daily = bot_data.daily ?? {};
+        t1_switch.checked = resin.noticed ?? false;
+        t1_input.value = resin.notice_num ?? 140;
+        t2_switch.checked = expedition.noticed ?? false;
+        t4_switch.checked = daily.noticed ?? false;
+        t4_input.value = daily.notice_hour ?? 22;
+    }
+
+    function getBotData() {
+        return JSON.parse(window.atob("{{ user.bot_data }}"));
+    }
+
+    function getPath() {
+        return "{{ user.command }}"
+    }
+
+    function parseJson(data, code, message) {
+        const path = getPath();
+        return JSON.stringify({
+                path: path,
+                data: data,
+                code: code,
+                message: message
+            }
+        );
+    }
+
+    init();
+</script>
+
+</body>
+
+</html>
