@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国际服登录 - PaiGramTeam</title>
+    <script src="/js/gt.js" type="text/javascript"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2em;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.5em;
+            margin: 0.5em 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>国际服登录</h2>
+    <input type="email" id="email" placeholder="邮箱" required>
+    <input type="password" id="password" placeholder="密码" required>
+    <input type="text" id="code" placeholder="请输入邮件验证码" class="hidden">
+    <div id="captcha">
+        <div id="wait" class="hidden">正在加载验证码...</div>
+    </div>
+    <button id="loginBtn">登录</button>
+    <button id="cancelBtn">重置页面状态</button>
+    <div id="message"></div>
+    <div id="cookie"></div>
+    <button id="copyBtn" class="hidden">复制 cookie</button>
+</div>
+
+<script>
+    var mmt = null;
+    var mmt_result = null;
+    var ticket = null;
+
+    function startGeetest() {
+        if (!mmt) {
+            return;
+        }
+        console.log("start init geetest");
+        document.getElementById("wait").classList.remove('hidden');
+        const initParams = {
+            gt: mmt.gt,
+            challenge: mmt.challenge,
+            new_captcha: mmt.new_captcha,
+            api_server: "api-na.geetest.com",
+            https: /^https/i.test(window.location.protocol),
+            product: "bind",
+        };
+        window.initGeetest(initParams, function (captchaObj) {
+            captchaObj.appendTo("#captcha");
+            captchaObj.onReady(function () {
+                document.getElementById("wait").classList.add('hidden');
+                captchaObj.verify();
+            });
+            captchaObj.onSuccess(function () {
+                const validate = captchaObj.getValidate();
+                mmt_result = {
+                    session_id: mmt.session_id,
+                    ...validate,
+                }
+                console.log(mmt_result);
+                document.getElementById("message").innerText = "验证已通过！请等待";
+                login();
+            });
+        });
+    }
+
+    function login() {
+        const email_div = document.getElementById('email');
+        const password_div = document.getElementById('password');
+        const code_div = document.getElementById('code');
+        // 冻结输入框
+        email_div.disabled = true;
+        password_div.disabled = true;
+        code_div.disabled = true;
+        const email = email_div.value;
+        const password = password_div.value;
+        const code = code_div.value;
+
+        if (!email || !password) {
+            document.getElementById('message').innerText = '请输入邮箱和密码。';
+            email_div.disabled = false;
+            password_div.disabled = false;
+            return;
+        }
+
+        const data = {
+            email,
+            password,
+            code,
+            ...(mmt_result && {mmt_result}),
+            ...(ticket && {ticket}),
+        }
+        console.log(data);
+
+        fetch('/login_start', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then((response) => {
+            response.json().then((result) => {
+                console.log(result);
+                if (result.code === 0) {
+                    document.getElementById('message').innerText = '登录成功！🎉';
+                    document.getElementById('cookie').innerText = result.result;
+                    document.getElementById('copyBtn').classList.remove('hidden');
+                } else if (result.code === 1) {
+                    // 错误
+                    document.getElementById('message').innerText = result.message;
+                    password_div.disabled = false;
+                } else if (result.code === 2) {
+                    ticket = result.ticket;
+                    document.getElementById('message').innerText = '请输入验证码。';
+                    document.getElementById('code').classList.remove('hidden');
+                } else {
+                    mmt = result.mmt;
+                    startGeetest();
+                }
+            });
+        });
+    }
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+        login();
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', async () => {
+        mmt = null;
+        mmt_result = null;
+        ticket = null;
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('code').value = '';
+        document.getElementById('code').classList.add('hidden');
+        document.getElementById('message').innerText = '';
+        document.getElementById('cookie').innerText = '';
+        document.getElementById('copyBtn').classList.add('hidden');
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+        const cookie = document.getElementById('cookie').innerText;
+        await navigator.clipboard.writeText(cookie);
+        document.getElementById('message').innerText = '已复制 cookie 到剪贴板。';
+    });
+</script>
+</body>
+</html>
