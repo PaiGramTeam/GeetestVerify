@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" integrity="sha512-t4GWSVZO1eC8BM339Xd7Uphw5s17a86tIZIj8qRxhnKub6WoyhnrxeCIMeAqBPgdZGlCcG2PrZjMc+Wr78+5Xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js" integrity="sha512-3dZ9wIrMMij8rOH7X3kLfXAzwtcHpuYpEgQg1OA4QAob1e81H8ntUQmQm3pBudqIoySO5j0tHN4ENzA6+n2r4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://static.collei.net/paimon/js/telegram-web-app.js"></script>
+    <script src="https://sign.paimon.vip/telegram-web-app.js"></script>
 
     <!-- custom styles -->
     <style>
@@ -16,10 +16,14 @@
             color: #222;
         }
 
-        h1 {
+        h1, h5 {
             color: #eee;
-            margin-top: 50px;
+            margin-top: 20px;
             text-align: center;
+        }
+
+        h1 {
+            margin-top: 50px;
         }
 
         .navbar {
@@ -44,6 +48,7 @@
 
 <header>
     <h1>定时任务配置</h1>
+    <h5>UID: <span id="uid">Unknown</span>&nbsp;&nbsp;PlayerId: <span id="player_id">Unknown</span></h5>
 </header>
 <div style="height: 30px;"></div>
 <main class="container">
@@ -102,6 +107,10 @@
 </footer>
 
 <script>
+    let user_id = 0;
+    let player_id = 0;
+    const uid_span = document.getElementById("uid");
+    const player_id_span = document.getElementById("player_id");
     const t1_switch = document.getElementById("task1-switch");
     const t1_input = document.getElementById("task1-input");
     const t4_switch = document.getElementById("task4-switch");
@@ -109,6 +118,8 @@
 
     function submit() {
         const web_data = {
+            user_id: user_id,
+            player_id: player_id,
             resin: {
                 noticed: t1_switch.checked,
                 notice_num: t1_input.value
@@ -116,7 +127,7 @@
             daily: {
                 noticed: t4_switch.checked,
                 notice_hour: t4_input.value
-            }
+            },
         };
         const data = parseJson(web_data, 0, "OK");
         console.log(data);
@@ -126,6 +137,10 @@
 
     function init() {
         const bot_data = getBotData();
+        user_id = bot_data.user_id;
+        uid_span.value = user_id;
+        player_id = bot_data.player_id;
+        player_id_span.value = player_id;
         const resin = bot_data.resin ?? {};
         const daily = bot_data.daily ?? {};
         t1_switch.checked = resin.noticed ?? false;

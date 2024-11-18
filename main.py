@@ -53,44 +53,17 @@ async def debug_challenge_page(
     )
 
 
-@app.get("/tasks1", response_class=HTMLResponse)
+@app.get("/tasks{num}", response_class=HTMLResponse)
 async def debug_tasks1_page(
     request: Request,
+    num: str,
     command: str = Query(..., title="command"),
     bot_data: str = Query(..., title="bot_data"),
 ):
     user = {"command": command, "bot_data": bot_data}
-    return templates.TemplateResponse("tasks1.html", {"request": request, "user": user})
-
-
-@app.get("/tasks2", response_class=HTMLResponse)
-async def debug_tasks2_page(
-    request: Request,
-    command: str = Query(..., title="command"),
-    bot_data: str = Query(..., title="bot_data"),
-):
-    user = {"command": command, "bot_data": bot_data}
-    return templates.TemplateResponse("tasks2.html", {"request": request, "user": user})
-
-
-@app.get("/tasks3", response_class=HTMLResponse)
-async def debug_tasks3_page(
-    request: Request,
-    command: str = Query(..., title="command"),
-    bot_data: str = Query(..., title="bot_data"),
-):
-    user = {"command": command, "bot_data": bot_data}
-    return templates.TemplateResponse("tasks3.html", {"request": request, "user": user})
-
-
-@app.get("/tasks4", response_class=HTMLResponse)
-async def debug_tasks4_page(
-    request: Request,
-    command: str = Query(..., title="command"),
-    bot_data: str = Query(..., title="bot_data"),
-):
-    user = {"command": command, "bot_data": bot_data}
-    return templates.TemplateResponse("tasks4.html", {"request": request, "user": user})
+    return templates.TemplateResponse(
+        f"tasks{num}.html", {"request": request, "user": user}
+    )
 
 
 @app.get("/relic_property", response_class=HTMLResponse)
