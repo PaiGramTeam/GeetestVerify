@@ -178,9 +178,9 @@
     function init() {
         const bot_data = getBotData();
         user_id = bot_data.user_id;
-        uid_span.value = user_id;
+        uid_span.innerHTML = user_id;
         player_id = bot_data.player_id;
-        player_id_span.value = player_id;
+        player_id_span.innerHTML = player_id;
         const resin = bot_data.resin ?? {};
         const realm = bot_data.realm ?? {};
         const expedition = bot_data.expedition ?? {};
