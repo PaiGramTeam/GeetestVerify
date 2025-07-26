@@ -87,6 +87,10 @@ async def relic_property_page(
     )
 
 
-@app.get("/telegram-web-app.js", response_class=PlainTextResponse)
+class JSResponse(PlainTextResponse):
+    media_type = "text/javascript"
+
+
+@app.get("/telegram-web-app.js", response_class=JSResponse)
 async def get_telegram_web_js():
     return (await client.get("https://telegram.org/js/telegram-web-app.js")).text
