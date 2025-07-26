@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>国际服登录 - PaiGramTeam</title>
     <script src="/js/gt.js" type="text/javascript"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.7/js/bootstrap.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +17,7 @@
             height: 100vh;
         }
 
-        .login-container {
+        .container {
             background: white;
             padding: 2em;
             border-radius: 5px;
@@ -34,25 +36,45 @@
     </style>
 </head>
 <body>
-<div class="login-container">
-    <h2>国际服登录</h2>
-    <input type="email" id="email" placeholder="邮箱" required>
-    <input type="password" id="password" placeholder="密码" required>
-    <input type="text" id="code" placeholder="请输入邮件验证码" class="hidden">
-    <div id="captcha">
-        <div id="wait" class="hidden">正在加载验证码...</div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <h1 class="text-center">国际服登录</h1>
+            <div class="form-group">
+                <label for="email">邮箱</label>
+                <input type="email" id="email" class="form-control" placeholder="请输入邮箱" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" class="form-control" id="password" placeholder="请输入密码" required>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control hidden" id="code" placeholder="请输入邮件验证码" required>
+            </div>
+            <div id="captcha">
+                <div id="wait" class="hidden">正在加载验证码...</div>
+            </div>
+            <div class="form-group text-center">
+                <button class="btn btn-primary" id="loginBtn">登录</button>
+                <button type="reset" class="btn btn-secondary" id="cancelBtn">重置</button>
+            </div>
+            <div id="message"></div>
+            <div class="form-group">
+                <input type="text" class="form-control hidden" id="cookie" disabled>
+            </div>
+            <div class="form-group text-center">
+                <button id="copyBtn" class="hidden btn btn-primary">复制 cookie</button>
+            </div>
+        </div>
     </div>
-    <button id="loginBtn">登录</button>
-    <button id="cancelBtn">重置页面状态</button>
-    <div id="message"></div>
-    <div id="cookie"></div>
-    <button id="copyBtn" class="hidden">复制 cookie</button>
 </div>
 
 <script>
     var mmt = null;
     var mmt_result = null;
     var ticket = null;
+    var device_id = '{{ device_id }}';
+    var old_code = null;
 
     function startGeetest() {
         if (!mmt) {
@@ -80,11 +102,24 @@
                     session_id: mmt.session_id,
                     ...validate,
                 }
+                console.log("geetest success");
                 console.log(mmt_result);
-                document.getElementById("message").innerText = "验证已通过！请等待";
-                login();
+                if (old_code === 3) {
+                    document.getElementById("message").innerText = "验证已通过！请等待";
+                    login();
+                } else {
+                    document.getElementById("message").innerText = "验证已通过！邮件已发送，请输入验证码。";
+                    startInputCode();
+                }
             });
         });
+    }
+
+    function startInputCode() {
+        const code_div = document.getElementById('code');
+        document.getElementById('message').innerText = '请输入验证码。';
+        document.getElementById('code').classList.remove('hidden');
+        code_div.disabled = false;
     }
 
     function login() {
@@ -109,10 +144,13 @@
         const data = {
             email,
             password,
+            device_id,
             code,
             ...(mmt_result && {mmt_result}),
+            old_code,
             ...(ticket && {ticket}),
         }
+        console.log("post data");
         console.log(data);
 
         fetch('/login_start', {
@@ -121,20 +159,26 @@
             body: JSON.stringify(data)
         }).then((response) => {
             response.json().then((result) => {
+                console.log("received data");
                 console.log(result);
+                old_code = result.code;
                 if (result.code === 0) {
                     document.getElementById('message').innerText = '登录成功！🎉';
-                    document.getElementById('cookie').innerText = result.result;
+                    document.getElementById('cookie').value = result.result;
+                    document.getElementById('cookie').classList.remove('hidden');
                     document.getElementById('copyBtn').classList.remove('hidden');
                 } else if (result.code === 1) {
                     // 错误
                     document.getElementById('message').innerText = result.message;
                     password_div.disabled = false;
+                    code_div.disabled = false;
                 } else if (result.code === 2) {
                     ticket = result.ticket;
-                    document.getElementById('message').innerText = '请输入验证码。';
-                    document.getElementById('code').classList.remove('hidden');
+                    startInputCode();
                 } else {
+                    if (result.ticket) {
+                        ticket = result.ticket;
+                    }
                     mmt = result.mmt;
                     startGeetest();
                 }
@@ -157,12 +201,13 @@
         document.getElementById('code').value = '';
         document.getElementById('code').classList.add('hidden');
         document.getElementById('message').innerText = '';
-        document.getElementById('cookie').innerText = '';
+        document.getElementById('cookie').value = '';
+        document.getElementById('cookie').classList.add('hidden');
         document.getElementById('copyBtn').classList.add('hidden');
     });
 
     document.getElementById('copyBtn').addEventListener('click', async () => {
-        const cookie = document.getElementById('cookie').innerText;
+        const cookie = document.getElementById('cookie').value;
         await navigator.clipboard.writeText(cookie);
         document.getElementById('message').innerText = '已复制 cookie 到剪贴板。';
     });

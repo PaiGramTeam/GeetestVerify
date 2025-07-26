@@ -13,14 +13,17 @@ code_map = {
     0: "登录成功",
     1: "未知错误",
     2: "需要邮箱验证",
-    3: "需要过验证",
+    3: "需要过登录人机验证",
+    4: "需要过邮箱人机验证",
 }
 
 
 class LoginRequest(BaseModel):
     email: str
     password: str
+    device_id: str
     mmt_result: Optional[SessionMMTResult] = None
+    old_code: Optional[int] = None
     code: Optional[str] = None
     ticket: Optional[ActionTicket] = None
 
@@ -41,11 +44,16 @@ class CookieResult(CookieLoginResult):
 
 @router.get("/login_start")
 async def login_start(request: Request):
-    return templates.TemplateResponse("login_email.html", {"request": request})
+    device_id = GenshinClient.generate_app_device_id()
+    return templates.TemplateResponse(
+        "login_email.html", {"request": request, "device_id": device_id}
+    )
 
 
-async def do_login_session_mmt(data: SessionMMT):
-    return LoginResult(code=3, message="需要过验证", mmt=data)
+async def do_login_session_mmt(
+    mode: str, data: SessionMMT, ticket: Optional[ActionTicket] = None
+):
+    return LoginResult(code=3, message=f"需要过验证 {mode}", mmt=data, ticket=ticket)
 
 
 async def do_login_action_ticket(client: GenshinClient, result: ActionTicket):
@@ -56,8 +64,10 @@ async def do_login_action_ticket(client: GenshinClient, result: ActionTicket):
         return LoginResult(code=1, message=str(exc))  # 未知错误
     if isinstance(email_result, SessionMMT):
         # 需要过验证
-        return await do_login_session_mmt(email_result)
-    return LoginResult(code=2, message="需要邮箱验证")
+        return LoginResult(
+            code=4, message="需要过邮箱人机验证", mmt=email_result, ticket=result
+        )
+    return LoginResult(code=2, message="需要邮箱验证", ticket=result)
 
 
 async def do_login(data: LoginRequest):
@@ -74,7 +84,8 @@ async def do_login(data: LoginRequest):
         result = await client._app_login(
             data.email.strip(),
             data.password,
-            mmt_result=data.mmt_result,
+            device_id=data.device_id,
+            mmt_result=data.mmt_result if data.old_code == 3 else None,
             ticket=data.ticket,
         )
     except Exception as exc:
@@ -82,7 +93,7 @@ async def do_login(data: LoginRequest):
 
     if isinstance(result, SessionMMT):
         # 需要过验证
-        return await do_login_session_mmt(result)
+        return LoginResult(code=3, message="需要过登录人机验证", mmt=result)
     elif isinstance(result, ActionTicket):
         # 需要邮箱验证
         return await do_login_action_ticket(client, result)
@@ -99,6 +110,4 @@ async def do_login(data: LoginRequest):
 async def login_form(data: LoginRequest):
     if not data.email or not data.password:
         return LoginResult(code=1, message="邮箱或者密码不能为空")
-    if data.ticket and not data.code:
-        return LoginResult(code=1, message="邮箱验证码不能为空")
     return await do_login(data)
