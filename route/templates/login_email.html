@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>国际服登录 - PaiGramTeam</title>
-    <script src="/js/gt.js" type="text/javascript"></script>
+    <script src="/js/gt4.js" type="text/javascript"></script>
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.7/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.7/js/bootstrap.min.js"></script>
     <style>
@@ -83,18 +83,17 @@
         console.log("start init geetest");
         document.getElementById("wait").classList.remove('hidden');
         const initParams = {
-            gt: mmt.gt,
-            challenge: mmt.challenge,
-            new_captcha: mmt.new_captcha,
-            api_server: "api-na.geetest.com",
-            https: /^https/i.test(window.location.protocol),
+            captchaId: mmt.gt,
+            riskType: mmt.risk_type,
+            userInfo: JSON.stringify({session_id: mmt.session_id}),
+            apiServers: ["api-na.geetest.com"],
             product: "bind",
         };
-        window.initGeetest(initParams, function (captchaObj) {
+        window.initGeetest4(initParams, function (captchaObj) {
             captchaObj.appendTo("#captcha");
             captchaObj.onReady(function () {
                 document.getElementById("wait").classList.add('hidden');
-                captchaObj.verify();
+                captchaObj.showCaptcha();
             });
             captchaObj.onSuccess(function () {
                 const validate = captchaObj.getValidate();

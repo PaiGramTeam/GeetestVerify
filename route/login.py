@@ -1,8 +1,6 @@
-from typing import Optional
-
 from fastapi import APIRouter
 from genshin import GenshinClient, Region
-from genshin.models import SessionMMT, ActionTicket, SessionMMTResult, CookieLoginResult
+from genshin.models import ActionTicket, CookieLoginResult, SessionMMTv4, SessionMMTv4Result
 from pydantic import BaseModel
 from starlette.requests import Request
 
@@ -22,18 +20,18 @@ class LoginRequest(BaseModel):
     email: str
     password: str
     device_id: str
-    mmt_result: Optional[SessionMMTResult] = None
-    old_code: Optional[int] = None
-    code: Optional[str] = None
-    ticket: Optional[ActionTicket] = None
+    mmt_result: SessionMMTv4Result | None = None
+    old_code: int | None = None
+    code: str | None = None
+    ticket: ActionTicket | None = None
 
 
 class LoginResult(BaseModel):
     code: int
     message: str
-    result: Optional[str] = None
-    mmt: Optional[SessionMMT] = None
-    ticket: Optional[ActionTicket] = None
+    result: str | None = None
+    mmt: SessionMMTv4 | None = None
+    ticket: ActionTicket | None = None
 
 
 class CookieResult(CookieLoginResult):
@@ -46,12 +44,12 @@ class CookieResult(CookieLoginResult):
 async def login_start(request: Request):
     device_id = GenshinClient.generate_app_device_id()
     return templates.TemplateResponse(
-        "login_email.html", {"request": request, "device_id": device_id}
+        request, "login_email.html", {"device_id": device_id}
     )
 
 
 async def do_login_session_mmt(
-    mode: str, data: SessionMMT, ticket: Optional[ActionTicket] = None
+    mode: str, data: SessionMMTv4, ticket: ActionTicket | None = None
 ):
     return LoginResult(code=3, message=f"需要过验证 {mode}", mmt=data, ticket=ticket)
 
@@ -62,7 +60,7 @@ async def do_login_action_ticket(client: GenshinClient, result: ActionTicket):
         email_result = await client._send_verification_email(result)
     except Exception as exc:
         return LoginResult(code=1, message=str(exc))  # 未知错误
-    if isinstance(email_result, SessionMMT):
+    if isinstance(email_result, SessionMMTv4):
         # 需要过验证
         return LoginResult(
             code=4, message="需要过邮箱人机验证", mmt=email_result, ticket=result
@@ -91,7 +89,7 @@ async def do_login(data: LoginRequest):
     except Exception as exc:
         return LoginResult(code=1, message=str(exc))  # 未知错误
 
-    if isinstance(result, SessionMMT):
+    if isinstance(result, SessionMMTv4):
         # 需要过验证
         return LoginResult(code=3, message="需要过登录人机验证", mmt=result)
     elif isinstance(result, ActionTicket):

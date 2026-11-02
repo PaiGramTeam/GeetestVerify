@@ -1,5 +1,4 @@
 import httpx
-
 from fastapi import FastAPI, Query, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
@@ -30,7 +29,7 @@ async def debug_challenge_page(
         "challenge": challenge,
     }
     return templates.TemplateResponse(
-        "example.html", {"request": request, "user": user, "geetest": geetest}
+        request, "example.html", {"user": user, "geetest": geetest}
     )
 
 
@@ -50,7 +49,7 @@ async def debug_challenge_page(
         "challenge": challenge,
     }
     return templates.TemplateResponse(
-        "webapp.html", {"request": request, "user": user, "geetest": geetest}
+        request, "webapp.html", {"user": user, "geetest": geetest}
     )
 
 
@@ -62,9 +61,7 @@ async def debug_tasks1_page(
     bot_data: str = Query(..., title="bot_data"),
 ):
     user = {"command": command, "bot_data": bot_data}
-    return templates.TemplateResponse(
-        f"tasks{num}.html", {"request": request, "user": user}
-    )
+    return templates.TemplateResponse(request, f"tasks{num}.html", {"user": user})
 
 
 @app.get("/relic_property", response_class=HTMLResponse)
@@ -83,9 +80,7 @@ async def relic_property_page(
         "name": name,
         "cid": cid,
     }
-    return templates.TemplateResponse(
-        "relic_property.html", {"request": request, "user": user}
-    )
+    return templates.TemplateResponse(request, "relic_property.html", {"user": user})
 
 
 class JSResponse(PlainTextResponse):
