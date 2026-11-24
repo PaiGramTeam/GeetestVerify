@@ -1,0 +1,10 @@
+{
+  "name": "geetestverify",
+  "tagline": "A todo API with interactive docs.",
+  "description": "A todo API with interactive docs.",
+  "language": "Python",
+  "runtimeVersion": "3.12",
+  "accent": "#05998B",
+  "tags": ["FastAPI"],
+  "topics": ["python", "fastapi", "openapi"]
+}
