@@ -85,10 +85,11 @@
         const initParams = {
             captchaId: mmt.gt,
             riskType: mmt.risk_type,
-            userInfo: JSON.stringify({session_id: mmt.session_id}),
-            apiServers: ["api-na.geetest.com"],
+            userInfo: mmt.session_id ? JSON.stringify({session_id: mmt.session_id}) : undefined,
+            apiServers: ["gcaptcha4.captchami.com"],
             product: "bind",
         };
+        console.log(initParams);
         window.initGeetest4(initParams, function (captchaObj) {
             captchaObj.appendTo("#captcha");
             captchaObj.onReady(function () {
@@ -98,7 +99,8 @@
             captchaObj.onSuccess(function () {
                 const validate = captchaObj.getValidate();
                 mmt_result = {
-                    session_id: mmt.session_id,
+                    ...(mmt.session_id && {session_id: mmt.session_id}),
+                    ...(mmt.check_id && {check_id: mmt.check_id}),
                     ...validate,
                 }
                 console.log("geetest success");

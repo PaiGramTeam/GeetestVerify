@@ -1,6 +1,11 @@
 from fastapi import APIRouter
 from genshin import GenshinClient, Region
-from genshin.models import ActionTicket, CookieLoginResult, SessionMMTv4, SessionMMTv4Result
+from genshin.models import (
+    ActionTicket,
+    CookieLoginResult,
+    SessionMMTv4,
+    SessionMMTv4Result,
+)
 from pydantic import BaseModel
 from starlette.requests import Request
 
